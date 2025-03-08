@@ -217,16 +217,21 @@ def visualize_routes(G, paths, pos, node_colors, node_sizes, nodes_list, source,
         total_distance = 0
         unique_borders = set()
         node_types_count = {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0}
-        
+        total_carbon_emission = 0  # Initialize total carbon emission
+
         for u, v in zip(path, path[1:]):
             if G.has_edge(u, v):  # Make sure the edge exists
                 v_type = G.nodes[v]["type"]
                 node_types_count[v_type] = node_types_count.get(v_type, 0) + 1
-                
-                print(f"{u} → {v} ({G.nodes[v]['type']}): {G[u][v]['actual_distance']} km, Border: {G[u][v]['border']}")
-                total_distance += G[u][v]['actual_distance']
+
+                distance = G[u][v]['actual_distance']
+                carbon_emission = calculate_carbon_emission(distance, v_type)
+                total_carbon_emission += carbon_emission  # Accumulate carbon emission
+
+                print(f"{u} → {v} ({G.nodes[v]['type']}): {distance} km, Border: {G[u][v]['border']}, Emission: {carbon_emission:.2f} kg CO2")
+                total_distance += distance
                 unique_borders.add(G[u][v]['border'])
-        
+
         print("Total Distance:", round(total_distance, 1), "km")
         print("Total Border Crossings:", len(unique_borders))
         print("Border Crossing Countries:", ", ".join(unique_borders))
@@ -234,6 +239,7 @@ def visualize_routes(G, paths, pos, node_colors, node_sizes, nodes_list, source,
         for mode, count in node_types_count.items():
             if count > 0:
                 print(f"  - {mode}: {count} facilities")
+        print("Total Carbon Emission:", round(total_carbon_emission, 2), "kg CO2")  # Print total carbon emission
 
 def get_routes_info(G, paths, source, target):
     """
@@ -260,7 +266,8 @@ def get_routes_info(G, paths, source, target):
             "total_border_crossings": 0,
             "border_crossing_countries": [],
             "transportation_mode_usage": {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0},
-            "total_transit_time_hours": 0  # Transit time storage
+            "total_transit_time_hours": 0,  # Transit time storage
+            "total_carbon_emission": 0  # Carbon emission storage
         }
 
         for u, v in zip(path, path[1:]):
@@ -277,8 +284,12 @@ def get_routes_info(G, paths, source, target):
                 travel_time = distance / speed_kmh[v_type]  # Distance ÷ Speed
                 route_data["total_transit_time_hours"] += travel_time
 
+                # Carbon emission calculation
+                carbon_emission = calculate_carbon_emission(distance, v_type)
+                route_data["total_carbon_emission"] += carbon_emission
+
                 route_data["edge_details"].append(
-                    f"{u} → {v} ({v_type}): {distance} km, Cost: ${cost:.2f}, Time: {travel_time:.2f} hrs, Border: {G[u][v]['border']}"
+                    f"{u} → {v} ({v_type}): {distance} km, Cost: ${cost:.2f}, Time: {travel_time:.2f} hrs, Emission: {carbon_emission:.2f} kg CO2, Border: {G[u][v]['border']}"
                 )
 
                 route_data["total_distance"] += distance
@@ -314,29 +325,35 @@ def rank_routes(routes_info):
     # Sorting based on total cost (ascending)
     ranked_by_cost = sorted(routes_info, key=lambda x: x["total_cost"])
 
-    # Formatting results
+    # Add rank and include carbon emission in the response
+    for idx, route in enumerate(ranked_by_time):
+        route["rank"] = idx + 1
+
+    for idx, route in enumerate(ranked_by_cost):
+        route["rank"] = idx + 1
+
     return {
         "ranked_by_time": [
             {
-                "rank": i + 1,
+                "rank": route["rank"],
                 "route": route["route"],
                 "total_transit_time_hours": route["total_transit_time_hours"],
-                "total_cost": route["total_cost"]
+                "total_cost": route["total_cost"],
+                "total_carbon_emission": f"{route['total_carbon_emission']:.3f}"
             }
-            for i, route in enumerate(ranked_by_time)
+            for route in ranked_by_time
         ],
         "ranked_by_cost": [
             {
-                "rank": i + 1,
+                "rank": route["rank"],
                 "route": route["route"],
                 "total_cost": route["total_cost"],
-                "total_transit_time_hours": route["total_transit_time_hours"]
+                "total_transit_time_hours": route["total_transit_time_hours"],
+                "total_carbon_emission": f"{route['total_carbon_emission']:.3f}"
             }
-            for i, route in enumerate(ranked_by_cost)
+            for route in ranked_by_cost
         ]
     }
-
-
 
 def get_route_cords(G, paths, source, target):
     if not paths:
@@ -426,6 +443,19 @@ def get_optimal_routes_with_coords(G, paths):
 
     return optimal_routes
 
+def calculate_carbon_emission(distance, mode):
+    """
+    Calculate carbon emission based on distance and transportation mode.
+    - distance: Distance in kilometers
+    - mode: Transportation mode ('Airport', 'Seaport', 'Rail Terminal', 'City')
+    """
+    emission_factors = {
+        "Airport": 0.115,  # kg CO2 per km
+        "Seaport": 0.015,  # kg CO2 per km
+        "Rail Terminal": 0.030,  # kg CO2 per km
+        "City": 0.010  # kg CO2 per km
+    }
+    return distance * emission_factors.get(mode, 0.010)
 
 # Example usage:
 def main(preferred_mode=None):

@@ -45,11 +45,10 @@ def calculate_routes():
     G, paths, pos, node_colors, node_sizes, nodes_list = eng.find_optimal_routes(
         df, source, target, preferred_mode=preferred_mode, k=10
     )
-    # routes_data = eng.get_optimal_routes(G, paths)
-    routes_data = eng.get_optimal_routes_with_coords(G, paths)
+    routes_info = eng.get_routes_info(G, paths, source, target)
+    ranked_routes = eng.rank_routes(routes_info)
       
-    # For this example, we'll just return the sample data
-    return jsonify(routes_data)
+    return jsonify(ranked_routes)
 
 
 
