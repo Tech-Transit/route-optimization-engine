@@ -1,0 +1,40 @@
+Facility Name,Code,Country,Latitude,Longitude,Type
+Mundra Port,,India,22.74,69.7,Seaport
+Nhava Sheva (Jawaharlal Nehru Port),,India,18.93,72.93,Seaport
+Port of Chennai,,India,13.1,80.3,Seaport
+Port of Visakhapatnam,,India,17.68,83.3,Seaport
+Deendayal Port Trust (Kandla),,India,23.02,70.22,Seaport
+Paradip Port,,India,20.3,86.68,Seaport
+Haldia Dock Complex,,India,22.03,88.1,Seaport
+Kolkata Dock System,,India,22.55,88.33,Seaport
+V.O. Chidambaranar Port Trust (Tuticorin),,India,8.78,78.22,Seaport
+New Mangalore Port,,India,12.92,74.82,Seaport
+Cochin Port,,India,9.97,76.23,Seaport
+Kamarajar Port (Ennore),,India,13.23,80.33,Seaport
+Indira Gandhi International Airport,DEL,India,28.5562,77.1,Airport
+Chhatrapati Shivaji Maharaj International Airport,BOM,India,19.0896,72.8656,Airport
+Chennai International Airport,MAA,India,13.067,80.237,Airport
+Kempegowda International Airport,BLR,India,13.1986,77.7066,Airport
+Rajiv Gandhi International Airport,HYD,India,17.2403,78.4294,Airport
+Delhi Inland Container Depot,,India,28.5644,77.2857,Rail Terminal
+Mumbai Goods Terminus,,India,19.2403,72.8376,Rail Terminal
+Chennai Central Freight Hub,,India,13.047,80.168,Rail Terminal
+Port of Shanghai,,China,31.38,121.5,Seaport
+Port of Shenzhen,,China,22.5,114.12,Seaport
+Port of Ningbo-Zhoushan,,China,29.93,122.1,Seaport
+Shanghai Pudong International Airport,PVG,China,31.1434,121.8052,Airport
+Beijing Capital International Airport,PEK,China,40.0725,116.5975,Airport
+Chengdu Railway Container Center Station,,China,30.5728,104.0668,Rail Terminal
+Manzhouli Railway Station,,China,49.5937,117.4333,Rail Terminal
+Port of Novorossiysk,,Russia,44.72,37.77,Seaport
+Port of Saint Petersburg,,Russia,59.88,30.3,Seaport
+Sheremetyevo International Airport,SVO,Russia,55.9728,37.4146,Airport
+Domodedovo International Airport,DME,Russia,55.4088,37.9063,Airport
+Moscow-Tovarnaya-Kurskaya Railway Station,,Russia,55.7542,37.6547,Rail Terminal
+Vladivostok-Tovarny Railway Station,,Russia,43.1606,131.9556,Rail Terminal
+Port of Helsinki,,Finland,60.17,24.95,Seaport
+Helsinki-Vantaa Airport,HEL,Finland,60.3172,24.9633,Airport
+Helsinki Vuosaari Harbour Railway Yard,,Finland,60.206,25.1556,Rail Terminal
+Port of Piraeus,,Greece,37.95,23.63,Seaport
+Athens International Airport,ATH,Greece,37.9364,23.9445,Airport
+Thriasio Freight Center,,Greece,38.0666,23.5333,Rail Terminal
