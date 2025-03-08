@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 import pandas as pd
 from RouteEngine import engine as eng
-
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  
 df = pd.read_csv('./assets/transport_facilities_full.csv')
 
 @app.route('/')
@@ -31,17 +32,17 @@ def home():
     
     return f"<p>{info}</p>"
 
-@app.route('/api/calculate_routes', methods=['POST'])
+@app.route('/api/calculate_routes', methods=['POST', 'GET'])
 def calculate_routes():
     # Get parameters from the request
-    # data = request.json
-    # source = data.get('source')
-    # target = data.get('target')
-    # preferred_mode = data.get('preferred_mode')
+    data = request.json
+    source = data.get('source')
+    target = data.get('target')
+    preferred_mode = data.get('preferred_mode')
 
-    source = "Mundra Port"
-    target = "Port of Piraeus"
-    preferred_mode = 'Airport'
+    # source = "Mundra Port"
+    # target = "Port of Piraeus"
+    # preferred_mode = 'Airport'
     
     G, paths, pos, node_colors, node_sizes, nodes_list = eng.find_optimal_routes(
         df, source, target, preferred_mode=preferred_mode, k=10
