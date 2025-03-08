@@ -45,9 +45,29 @@ def calculate_routes():
     G, paths, pos, node_colors, node_sizes, nodes_list = eng.find_optimal_routes(
         df, source, target, preferred_mode=preferred_mode, k=10
     )
+
+    routes_data = eng.get_optimal_routes_with_coords(G, paths)
+    return jsonify(routes_data)
+
+
+@app.route('/api/ranked_routes', methods=['POST', 'GET'])
+def ranked_routes():
+    # data = request.json
+    # source = data.get('source')
+    # target = data.get('target')
+    # preferred_mode = data.get('preferred_mode')
+    source = "Mundra Port"
+    target = "Port of Piraeus"
+    preferred_mode = 'Airport'
+    
+
+    G, paths, pos, node_colors, node_sizes, nodes_list = eng.find_optimal_routes(
+        df, source, target, preferred_mode=preferred_mode, k=10
+    )
+
     routes_info = eng.get_routes_info(G, paths, source, target)
     ranked_routes = eng.rank_routes(routes_info)
-      
+
     return jsonify(ranked_routes)
 
 
