@@ -233,6 +233,94 @@ def visualize_routes(G, paths, pos, node_colors, node_sizes, nodes_list, source,
             if count > 0:
                 print(f"  - {mode}: {count} facilities")
 
+def get_routes_info(G, paths, source, target):
+    """
+    Returns the optimal routes' information as a list of dictionaries.
+    """
+    if not paths:
+        return {"message": "No paths found."}
+
+    routes_info = []
+    for i, path in enumerate(paths):
+        route_data = {
+            "route": " → ".join(path),
+            "edge_details": [],
+            "total_distance": 0,
+            "total_border_crossings": 0,
+            "border_crossing_countries": [],
+            "transportation_mode_usage": {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0}
+        }
+
+        for u, v in zip(path, path[1:]):
+            if G.has_edge(u, v):
+                v_type = G.nodes[v]["type"]
+                route_data["transportation_mode_usage"][v_type] += 1
+                route_data["edge_details"].append(
+                    f"{u} → {v} ({v_type}): {G[u][v]['actual_distance']} km, Border: {G[u][v]['border']}"
+                )
+                route_data["total_distance"] += G[u][v]["actual_distance"]
+                route_data["border_crossing_countries"].append(G[u][v]["border"])
+
+        route_data["total_distance"] = round(route_data["total_distance"], 1)
+        route_data["total_border_crossings"] = len(set(route_data["border_crossing_countries"]))
+        route_data["border_crossing_countries"] = ", ".join(set(route_data["border_crossing_countries"]))
+
+        routes_info.append(route_data)
+
+    return routes_info
+
+def get_routes_coordinates(G, paths, source, target):
+    """
+    Returns the optimal routes' information as a list of dictionaries, including coordinates.
+    """
+    if not paths:
+        return {"message": "No paths found."}
+
+    routes_info = []
+    for i, path in enumerate(paths):
+        route_data = {
+            "route": [],  # Store facility info instead of names
+            "edge_details": [],
+            "total_distance": 0,
+            "total_border_crossings": 0,
+            "border_crossing_countries": [],
+            "transportation_mode_usage": {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0}
+        }
+
+        for node in path:
+            if node in G.nodes:
+                route_data["route"].append({
+                    "Facility Name": node,
+                    "Code": G.nodes[node].get("Code"),
+                    "Country": G.nodes[node].get("Country"),
+                    "City": G.nodes[node].get("City"),
+                    "Latitude": G.nodes[node].get("Latitude"),
+                    "Longitude": G.nodes[node].get("Longitude"),
+                    "Type": G.nodes[node].get("Type"),
+                    "Transit Time (hrs)": G.nodes[node].get("Transit Time (hrs)"),
+                    "Distance (km)": G.nodes[node].get("Distance (km)"),
+                    "Border Crossings": G.nodes[node].get("Border Crossings"),
+                    "Currency": G.nodes[node].get("Currency")
+                })
+
+        for u, v in zip(path, path[1:]):
+            if G.has_edge(u, v):
+                v_type = G.nodes[v]["Type"] #change to Type for consistency
+                route_data["transportation_mode_usage"][v_type] += 1
+                route_data["edge_details"].append(
+                    f"{u} → {v} ({v_type}): {G[u][v]['actual_distance']} km, Border: {G[u][v]['border']}"
+                )
+                route_data["total_distance"] += G[u][v]["actual_distance"]
+                route_data["border_crossing_countries"].append(G[u][v]["border"])
+
+        route_data["total_distance"] = round(route_data["total_distance"], 1)
+        route_data["total_border_crossings"] = len(set(route_data["border_crossing_countries"]))
+        route_data["border_crossing_countries"] = ", ".join(set(route_data["border_crossing_countries"]))
+
+        routes_info.append(route_data)
+
+    return routes_info
+
 # Example usage:
 def main(preferred_mode=None):
     # Define source and target nodes
