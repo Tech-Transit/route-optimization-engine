@@ -2,6 +2,8 @@ import networkx as nx
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
 import pandas as pd
+import geopy.geocoders
+
 
 def find_optimal_routes(df_with_city, source, target, preferred_mode=None, k=10):
     """
@@ -269,17 +271,28 @@ def get_routes_info(G, paths, source, target):
 
     return routes_info
 
-def get_routes_coordinates(G, paths, source, target):
-    """
-    Returns the optimal routes' information as a list of dictionaries, including coordinates.
-    """
+def get_route_cords(G, paths, source, target):
     if not paths:
         return {"message": "No paths found."}
 
     routes_info = []
     for i, path in enumerate(paths):
+        # Get coordinates for each node in the path
+        coordinates = []
+        for node in path:
+            # Extract coordinates from graph node attributes
+            if 'pos' in G.nodes[node]:
+                coords = G.nodes[node]['pos']
+                coordinates.append({
+                    'name': node,
+                    'type': G.nodes[node]['type'],
+                    'lat': coords[0],
+                    'lng': coords[1]
+                })
+        
         route_data = {
-            "route": [],  # Store facility info instead of names
+            "route_id": i + 1,
+            "coordinates": coordinates,
             "edge_details": [],
             "total_distance": 0,
             "total_border_crossings": 0,
@@ -287,39 +300,65 @@ def get_routes_coordinates(G, paths, source, target):
             "transportation_mode_usage": {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0}
         }
 
-        for node in path:
-            if node in G.nodes:
-                route_data["route"].append({
-                    "Facility Name": node,
-                    "Code": G.nodes[node].get("Code"),
-                    "Country": G.nodes[node].get("Country"),
-                    "City": G.nodes[node].get("City"),
-                    "Latitude": G.nodes[node].get("Latitude"),
-                    "Longitude": G.nodes[node].get("Longitude"),
-                    "Type": G.nodes[node].get("Type"),
-                    "Transit Time (hrs)": G.nodes[node].get("Transit Time (hrs)"),
-                    "Distance (km)": G.nodes[node].get("Distance (km)"),
-                    "Border Crossings": G.nodes[node].get("Border Crossings"),
-                    "Currency": G.nodes[node].get("Currency")
-                })
-
         for u, v in zip(path, path[1:]):
             if G.has_edge(u, v):
-                v_type = G.nodes[v]["Type"] #change to Type for consistency
+                v_type = G.nodes[v]["type"]
                 route_data["transportation_mode_usage"][v_type] += 1
-                route_data["edge_details"].append(
-                    f"{u} → {v} ({v_type}): {G[u][v]['actual_distance']} km, Border: {G[u][v]['border']}"
-                )
+                route_data["edge_details"].append({
+                    "from": u,
+                    "to": v,
+                    "type": v_type,
+                    "distance": G[u][v]['actual_distance'],
+                    "border": G[u][v]['border']
+                })
                 route_data["total_distance"] += G[u][v]["actual_distance"]
                 route_data["border_crossing_countries"].append(G[u][v]["border"])
 
         route_data["total_distance"] = round(route_data["total_distance"], 1)
         route_data["total_border_crossings"] = len(set(route_data["border_crossing_countries"]))
-        route_data["border_crossing_countries"] = ", ".join(set(route_data["border_crossing_countries"]))
+        route_data["border_crossing_countries"] = list(set(route_data["border_crossing_countries"]))
 
         routes_info.append(route_data)
 
     return routes_info
+
+def get_lat_lon(location_name):
+    geolocator = geopy.geocoders.Nominatim(user_agent="geo_locator")
+    location = geolocator.geocode(location_name, exactly_one=True)
+    if location:
+        return location.latitude, location.longitude
+    else:
+        return "Location not found"
+
+def get_optimal_routes(G, paths):
+    """
+    Returns a list of optimal routes with only the path and total distance.
+    """
+    if not paths:
+        return {"message": "No paths found."}
+
+    optimal_routes = []
+    for path in paths:
+        total_distance = sum(G[u][v]["actual_distance"] for u, v in zip(path, path[1:]))
+        optimal_routes.append({"route": " → ".join(path), "total_distance": round(total_distance, 1)})
+
+    return optimal_routes
+
+def get_optimal_routes_with_coords(G, paths):
+    """
+    Returns a list of optimal routes with their coordinates instead of names.
+    """
+    if not paths:
+        return {"message": "No paths found."}
+
+    optimal_routes = []
+    for path in paths:
+        coordinates = [(G.nodes[node]["pos"][0], G.nodes[node]["pos"][1]) for node in path]
+        total_distance = sum(G[u][v]["actual_distance"] for u, v in zip(path, path[1:]))
+        optimal_routes.append({"coordinates": coordinates, "total_distance": round(total_distance, 1)})
+
+    return optimal_routes
+
 
 # Example usage:
 def main(preferred_mode=None):
