@@ -30,6 +30,9 @@ def home():
     return f"<p>{info}</p>"
 
 
+# @app.route('/routes')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
