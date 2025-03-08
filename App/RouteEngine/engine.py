@@ -237,10 +237,18 @@ def visualize_routes(G, paths, pos, node_colors, node_sizes, nodes_list, source,
 
 def get_routes_info(G, paths, source, target):
     """
-    Returns the optimal routes' information as a list of dictionaries.
+    Returns the optimal routes' information with cost and transit time estimation.
     """
     if not paths:
         return {"message": "No paths found."}
+
+    # Cost assumptions
+    cost_per_km = {"Airport": 5.0, "Seaport": 1.5, "Rail Terminal": 2.0, "City": 1.0}
+    border_crossing_fee = 50  # USD per border crossing
+
+    # Transit time assumptions
+    speed_kmh = {"Airport": 800, "Seaport": 35, "Rail Terminal": 60, "City": 50}
+    border_delay_hours = {"Airport": 3, "Seaport": 12, "Rail Terminal": 6, "City": 1}
 
     routes_info = []
     for i, path in enumerate(paths):
@@ -248,28 +256,87 @@ def get_routes_info(G, paths, source, target):
             "route": " → ".join(path),
             "edge_details": [],
             "total_distance": 0,
+            "total_cost": 0,
             "total_border_crossings": 0,
             "border_crossing_countries": [],
-            "transportation_mode_usage": {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0}
+            "transportation_mode_usage": {"Airport": 0, "Seaport": 0, "Rail Terminal": 0, "City": 0},
+            "total_transit_time_hours": 0  # Transit time storage
         }
 
         for u, v in zip(path, path[1:]):
             if G.has_edge(u, v):
                 v_type = G.nodes[v]["type"]
                 route_data["transportation_mode_usage"][v_type] += 1
+                distance = G[u][v]["actual_distance"]
+
+                # Cost calculation
+                cost = distance * cost_per_km[v_type]
+                route_data["total_cost"] += cost
+
+                # Transit time calculation
+                travel_time = distance / speed_kmh[v_type]  # Distance ÷ Speed
+                route_data["total_transit_time_hours"] += travel_time
+
                 route_data["edge_details"].append(
-                    f"{u} → {v} ({v_type}): {G[u][v]['actual_distance']} km, Border: {G[u][v]['border']}"
+                    f"{u} → {v} ({v_type}): {distance} km, Cost: ${cost:.2f}, Time: {travel_time:.2f} hrs, Border: {G[u][v]['border']}"
                 )
-                route_data["total_distance"] += G[u][v]["actual_distance"]
+
+                route_data["total_distance"] += distance
                 route_data["border_crossing_countries"].append(G[u][v]["border"])
 
+        # Add border crossing cost and delays
+        unique_borders = set(route_data["border_crossing_countries"])
+        border_cost = len(unique_borders) * border_crossing_fee
+        border_delay = sum(border_delay_hours.get(G.nodes[v]["type"], 0) for v in path if v in G.nodes)
+
+        route_data["total_cost"] += border_cost
+        route_data["total_transit_time_hours"] += border_delay  # Add delays
+
+        route_data["total_cost"] = round(route_data["total_cost"], 2)
+        route_data["total_transit_time_hours"] = round(route_data["total_transit_time_hours"], 1)
         route_data["total_distance"] = round(route_data["total_distance"], 1)
-        route_data["total_border_crossings"] = len(set(route_data["border_crossing_countries"]))
-        route_data["border_crossing_countries"] = ", ".join(set(route_data["border_crossing_countries"]))
+        route_data["total_border_crossings"] = len(unique_borders)
+        route_data["border_crossing_countries"] = ", ".join(unique_borders)
 
         routes_info.append(route_data)
 
     return routes_info
+
+def rank_routes(routes_info):
+    """
+    Ranks the routes based on total transit time and total cost.
+    Returns a dictionary formatted for JSON response.
+    """
+
+    # Sorting based on transit time (ascending)
+    ranked_by_time = sorted(routes_info, key=lambda x: x["total_transit_time_hours"])
+    
+    # Sorting based on total cost (ascending)
+    ranked_by_cost = sorted(routes_info, key=lambda x: x["total_cost"])
+
+    # Formatting results
+    return {
+        "ranked_by_time": [
+            {
+                "rank": i + 1,
+                "route": route["route"],
+                "total_transit_time_hours": route["total_transit_time_hours"],
+                "total_cost": route["total_cost"]
+            }
+            for i, route in enumerate(ranked_by_time)
+        ],
+        "ranked_by_cost": [
+            {
+                "rank": i + 1,
+                "route": route["route"],
+                "total_cost": route["total_cost"],
+                "total_transit_time_hours": route["total_transit_time_hours"]
+            }
+            for i, route in enumerate(ranked_by_cost)
+        ]
+    }
+
+
 
 def get_route_cords(G, paths, source, target):
     if not paths:
