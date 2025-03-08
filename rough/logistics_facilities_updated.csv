@@ -1,0 +1,40 @@
+Facility Name,Code,Country,Latitude,Longitude,Type,Transit Time (hrs),Distance (km),Border Crossings,Currency
+Mundra Port,,India,22.74,69.7,Seaport,48,850,"India,China",INR
+Nhava Sheva (Jawaharlal Nehru Port),,India,18.93,72.93,Seaport,36,700,"India,Russia",INR
+Port of Chennai,,India,13.1,80.3,Seaport,50,1200,"India,Greece",INR
+Port of Visakhapatnam,,India,17.68,83.3,Seaport,55,1400,"India,Finland",INR
+Deendayal Port Trust (Kandla),,India,23.02,70.22,Seaport,42,900,"India,China",INR
+Paradip Port,,India,20.3,86.68,Seaport,60,1600,"India,Russia",INR
+Haldia Dock Complex,,India,22.03,88.1,Seaport,65,1800,"India,Greece",INR
+Kolkata Dock System,,India,22.55,88.33,Seaport,70,1900,"India,Finland",INR
+V.O. Chidambaranar Port Trust (Tuticorin),,India,8.78,78.22,Seaport,58,1500,"India,China",INR
+New Mangalore Port,,India,12.92,74.82,Seaport,48,1100,"India,Russia",INR
+Cochin Port,,India,9.97,76.23,Seaport,52,1250,"India,Greece",INR
+Kamarajar Port (Ennore),,India,13.23,80.33,Seaport,45,1000,"India,Finland",INR
+Indira Gandhi International Airport,DEL,India,28.5562,77.1,Airport,5,300,"India,China",INR
+Chhatrapati Shivaji Maharaj International Airport,BOM,India,19.0896,72.8656,Airport,6,500,"India,Russia",INR
+Chennai International Airport,MAA,India,13.067,80.237,Airport,7,600,"India,Greece",INR
+Kempegowda International Airport,BLR,India,13.1986,77.7066,Airport,6,450,"India,Finland",INR
+Rajiv Gandhi International Airport,HYD,India,17.2403,78.4294,Airport,7,500,"India,China",INR
+Delhi Inland Container Depot,,India,28.5644,77.2857,Rail Terminal,12,750,"India,Russia",INR
+Mumbai Goods Terminus,,India,19.2403,72.8376,Rail Terminal,10,500,"India,Greece",INR
+Chennai Central Freight Hub,,India,13.047,80.168,Rail Terminal,14,800,"India,Finland",INR
+Port of Shanghai,,China,31.38,121.5,Seaport,40,1200,"China,Russia",CNY
+Port of Shenzhen,,China,22.5,114.12,Seaport,38,1100,"China,Greece",CNY
+Port of Ningbo-Zhoushan,,China,29.93,122.1,Seaport,42,1250,"China,Finland",CNY
+Shanghai Pudong International Airport,PVG,China,31.1434,121.8052,Airport,5,400,"China,India",CNY
+Beijing Capital International Airport,PEK,China,40.0725,116.5975,Airport,6,500,"China,Russia",CNY
+Chengdu Railway Container Center Station,,China,30.5728,104.0668,Rail Terminal,20,1800,"China,Greece",CNY
+Manzhouli Railway Station,,China,49.5937,117.4333,Rail Terminal,18,1600,"China,Finland",CNY
+Port of Novorossiysk,,Russia,44.72,37.77,Seaport,50,2000,"Russia,China",RUB
+Port of Saint Petersburg,,Russia,59.88,30.3,Seaport,60,2500,"Russia,India",RUB
+Sheremetyevo International Airport,SVO,Russia,55.9728,37.4146,Airport,5,400,"Russia,Greece",RUB
+Domodedovo International Airport,DME,Russia,55.4088,37.9063,Airport,6,500,"Russia,Finland",RUB
+Moscow-Tovarnaya-Kurskaya Railway Station,,Russia,55.7542,37.6547,Rail Terminal,22,2000,"Russia,China",RUB
+Vladivostok-Tovarny Railway Station,,Russia,43.1606,131.9556,Rail Terminal,24,2200,"Russia,India",RUB
+Port of Helsinki,,Finland,60.17,24.95,Seaport,48,2000,"Finland,Russia",EUR
+Helsinki-Vantaa Airport,HEL,Finland,60.3172,24.9633,Airport,5,300,"Finland,China",EUR
+Helsinki Vuosaari Harbour Railway Yard,,Finland,60.206,25.1556,Rail Terminal,18,1500,"Finland,India",EUR
+Port of Piraeus,,Greece,37.95,23.63,Seaport,42,1200,"Greece,Russia",EUR
+Athens International Airport,ATH,Greece,37.9364,23.9445,Airport,6,400,"Greece,China",EUR
+Thriasio Freight Center,,Greece,38.0666,23.5333,Rail Terminal,20,1600,"Greece,India",EUR
