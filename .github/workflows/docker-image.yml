@@ -1,0 +1,24 @@
+name: Docker Image CI [flask:wf]
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build the Docker image
+        run: docker build ./App --file ./App/Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/flask:wf
+
+      - name: Push the Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/flask:wf
