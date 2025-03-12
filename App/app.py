@@ -33,14 +33,11 @@ def home():
 @app.route('/api/calculate_routes', methods=['POST', 'GET'])
 def calculate_routes():
     # Get parameters from the request
-    # data = request.json
-    # source = data.get('source')
-    # target = data.get('target')
-    # preferred_mode = data.get('preferred_mode')
+    data = request.json
+    source = data.get('source')
+    target = data.get('target')
+    preferred_mode = data.get('preferred_mode')
 
-    source = "Mundra Port"
-    target = "Port of Piraeus"
-    preferred_mode = 'Airport'
     
     G, paths, pos, node_colors, node_sizes, nodes_list = eng.find_optimal_routes(
         df, source, target, preferred_mode=preferred_mode, k=10
@@ -52,13 +49,10 @@ def calculate_routes():
 
 @app.route('/api/ranked_routes', methods=['POST', 'GET'])
 def ranked_routes():
-    # data = request.json
-    # source = data.get('source')
-    # target = data.get('target')
-    # preferred_mode = data.get('preferred_mode')
-    source = "Mundra Port"
-    target = "Port of Piraeus"
-    preferred_mode = 'Airport'
+    data = request.json
+    source = data.get('source')
+    target = data.get('target')
+    preferred_mode = data.get('preferred_mode')
     
 
     G, paths, pos, node_colors, node_sizes, nodes_list = eng.find_optimal_routes(
